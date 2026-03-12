@@ -29,7 +29,7 @@ stock_agent = Agent(
         (show news headlines)
 
         ANALYSIS
-        (explain the likely reason for stock movement based on above data)
+        (explain in depth likely reason for stock movement based on above data)
         """,
 
     tools=[get_stock_data, search_news],
