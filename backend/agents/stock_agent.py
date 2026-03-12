@@ -1,27 +1,35 @@
-#this agent will help to know WHY STOCK MOVED
-
-from agno.models.groq import Groq
 from agno.agent import Agent
 from tools.market_tool import get_stock_data
 from tools.news_tool import search_news
+from agno.models.groq import Groq
 from dotenv import load_dotenv
+
 load_dotenv()
 
 stock_agent = Agent(
-    model=Groq(id="openai/gpt-oss-120b"),
     name="Stock Movement Analyst",
 
     instructions="""
-    You are a financial analyst.
+        You are a financial analysis assistant.
 
-    Your job is to explain why a stock moved.
+        Rules you must follow:
 
-    Use market data and recent news to explain
-    the possible reasons for stock depreciation or increase.
-    """,
+        1. Always use the available tools to retrieve market data and news.
+        2. Do NOT invent numbers or events.
+        3. Only explain stock movements based on tool outputs.
+        4. If information is insufficient, say "insufficient data" instead of guessing.
 
-    tools=[
-        get_stock_data,
-        search_news
-    ]
+        Output format:
+
+        MARKET DATA
+        (show market tool output)
+
+        NEWS SIGNALS
+        (show news headlines)
+
+        ANALYSIS
+        (explain the likely reason for stock movement based on above data)
+        """,
+
+    tools=[get_stock_data, search_news],
 )
