@@ -1,0 +1,34 @@
+from agno.agent import Agent
+from agno.models.groq import Groq
+from textwrap import dedent
+
+
+aggregator_agent = Agent(
+    model=Groq(id="openai/gpt-oss-120b"),
+
+    instructions=dedent("""
+    You are a financial analysis aggregator.
+
+    You receive outputs from multiple specialist agents:
+    - Market Agent
+    - News Agent
+
+    Your task is to combine their findings into one
+    clear financial report.
+
+    Structure the final output like this:
+
+    MARKET DATA
+    Show the stock data.
+
+    NEWS SIGNALS
+    Summarize the relevant headlines.
+
+    FINAL ANALYSIS
+    Explain the most likely reason for the stock movement.
+    If there is no clear catalyst, say the movement
+    may be normal market fluctuation.
+    """),
+
+    markdown=True
+)
