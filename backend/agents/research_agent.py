@@ -8,11 +8,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 1. Create knowledge with a vector DB
+from agno.knowledge.embedder.google import GeminiEmbedder
+
 research_kb = Knowledge(
     vector_db=LanceDb(
         uri="tmp/lancedb",
         table_name="financial_docs",
         search_type=SearchType.hybrid,
+        embedder=GeminiEmbedder(id="gemini-embedding-2"),
     ),
 )
 
