@@ -3,6 +3,7 @@ from agents.market_Agent import market_agent
 from agents.news_agent import news_agent
 from agents.sentiment_agent import sentiment_agent
 from agents.validator_agent import validate_analysis
+from agents.research_agent import research_agent
 
 from utils.sentiment_prompt import build_sentiment_prompt
 from utils.query_analyzer import analyze_query
@@ -61,6 +62,37 @@ def main():
         print("Reason:", validation["reason"])
 
         print("Confidence:", validation["confidence"])
+        
+    # --- NEW: Trigger RAG if signals conflict ---
+    if validation.get("validation_status") == "divergence":
+
+        print("\nDivergence detected. Running deeper research...\n")
+
+        research_result = research_agent.run(query)
+
+        research_text = research_result.content
+
+        print("\nResearch Insights:\n")
+        print(research_text)
+
+        # Re-run aggregator with research context
+        reanalysis_input = f"""
+        Original user query:
+        {query}
+
+        Initial analysis:
+        {analysis}
+
+        Research insights from financial documents:
+        {research_text}
+
+        Provide an updated financial analysis.
+        """
+
+        updated_response = aggregator_agent.run(reanalysis_input)
+
+        print("\nUpdated Analysis After Research:\n")
+        print(updated_response.content)
 
 if __name__ == "__main__":
     main()
