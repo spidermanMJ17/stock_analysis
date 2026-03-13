@@ -15,7 +15,7 @@ research_kb = Knowledge(
         uri="tmp/lancedb",
         table_name="financial_docs",
         search_type=SearchType.hybrid,
-        embedder=GeminiEmbedder(id="gemini-embedding-2"),
+        embedder=GeminiEmbedder(id="gemini-embedding-001"),
     ),
 )
 
