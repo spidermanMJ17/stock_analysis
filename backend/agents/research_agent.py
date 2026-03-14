@@ -27,7 +27,7 @@ research_kb.insert(path="knowledge/", reader=PDFReader())
 # 3. Create the agent
 research_agent = Agent(
     name="Financial Research Analyst",
-    model=Nvidia(id="meta/llama-4-maverick-17b-128e-instruct"),
+    model=Nvidia(id="microsoft/phi-3-medium-128k-instruct"),
     instructions=research_agent,
     knowledge=research_kb,
     search_knowledge=True,
