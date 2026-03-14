@@ -3,7 +3,7 @@ from agents.market_Agent import market_agent
 from agents.news_agent import news_agent
 from agents.sentiment_agent import sentiment_agent
 from agents.validator_agent import validate_analysis
-from agents.research_agent import research_agent
+from agents.research_agent import research_agent, research_kb, generate_search_queries
 
 from utils.sentiment_prompt import build_sentiment_prompt
 from utils.query_analyzer import analyze_query
@@ -68,7 +68,41 @@ def main():
 
             print("\nDivergence detected. Running deeper research...\n")
 
-            research_result = research_agent.run(f"From financial documents analyze Nvidia fundamentals: revenue trends, earnings guidance, risks based on provided {query}")
+            # STEP 1 — Retrieve documents from vector DB
+            queries = generate_search_queries(query)
+            docs = []
+            for q in queries:
+                results = research_kb.search(q, num_documents=3)
+                docs.extend(results)
+
+            docs = list(set(docs))
+            
+            print("\nRetrieved Document Context:\n")
+            print(docs)
+
+            # STEP 2 — Build prompt with document context
+            research_prompt = f"""
+            DOCUMENT CONTEXT
+            ----------------
+            {docs}
+
+            QUESTION
+            --------
+            {query}
+
+            INSTRUCTIONS
+            ------------
+            Use ONLY the document context.
+            Do NOT use external knowledge.
+
+            Extract insights about:
+            - revenue trends
+            - earnings guidance
+            - risks
+            """
+
+            # STEP 3 — Run research agent
+            research_result = research_agent.run(research_prompt)
 
             research_text = research_result.content
 
